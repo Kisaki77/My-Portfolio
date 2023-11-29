@@ -2594,4 +2594,14 @@ footer .copyright span:last-child::after {
 	background: #000000;
 }
 
+
+#home {
+    background: url(../images/wallp1.jpg);
+    background-size: cover;
+    background-attachment: fixed;
+    width: 100%;
+    height: 70%;
+    object-fit: cover;
+}
+
 /*# sourceMappingURL=main.css.map */
