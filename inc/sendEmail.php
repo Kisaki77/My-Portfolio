@@ -1,5 +1,10 @@
 ﻿<?php
 
+use PHPMailer\PHPMailer\PHPMailer;
+use PHPMailer\PHPMailer\Exception;
+
+require 'vendor/autoload.php';
+
 // Replace this with your own email address
 $siteOwnersEmail = 'nobuhlemlahleki@gmail.com';
 
@@ -44,6 +49,22 @@ if($_POST) {
 	$headers .= "Content-Type: text/html; charset=ISO-8859-1\r\n";
 
 
+	if (!$error) {
+		$mail = new PHPMailer(true);
+		try {
+		   $mail->setFrom($email, $name);
+		   $mail->addAddress($siteOwnersEmail);
+		   $mail->Subject = $subject;
+		   $mail->isHTML(true);
+		   $mail->Body = $message;
+	 
+		   $mail->send();
+		   echo "OK";
+		} catch (Exception $e) {
+		   echo "Mailer Error: " . $mail->ErrorInfo;
+		}
+	 } else {
+
    if (!$error) {
 
       ini_set("sendmail_from", $siteOwnersEmail); // for windows server
@@ -64,6 +85,7 @@ if($_POST) {
 
 	} # end if - there was a validation error
 
+}
 }
 
 ?>
