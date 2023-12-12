@@ -32,8 +32,6 @@ My projects are listed on my portfolio
 
 My Work Experiences are listed on my portfolio
 
-[Continue listing your work experience]
-
 ## Contact
 
 - **Email:** nobuhlemlahleki@gmail.com
@@ -42,4 +40,4 @@ My Work Experiences are listed on my portfolio
 
 ## License
 
-This portfolio is licensed under the [MIT License](LICENSE).
+This portfolio is licensed under the [MIT License].
