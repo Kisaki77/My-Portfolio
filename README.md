@@ -1,7 +1,4 @@
 # My-Portfolio
-Nobuhle Mlahleki's Portfolio
-
-# Your Name's Portfolio
 
 ## Overview
 
