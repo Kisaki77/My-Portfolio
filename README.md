@@ -37,4 +37,4 @@ My Work Experiences are listed on my portfolio
 
 ## License
 
-This portfolio is licensed under the file named LICENSE.
+This portfolio is licensed under the [MIT License](./LICENSE).
