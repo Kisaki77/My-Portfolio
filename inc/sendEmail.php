@@ -1,91 +1,64 @@
 ﻿<?php
-
+session_start();
+unset($_SESSION['success']);
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
 
-require 'vendor/autoload.php';
+// Your Gmail credentials
 
-// Replace this with your own email address
-$siteOwnersEmail = 'nobuhlemlahleki@gmail.com';
+require 'PHPMailer-master/src/Exception.php';
 
+/* The main PHPMailer class. */
+require 'PHPMailer-master/src/PHPMailer.php';
 
-if($_POST) {
-
-   $name = trim(stripslashes($_POST['contactName']));
-   $email = trim(stripslashes($_POST['contactEmail']));
-   $subject = trim(stripslashes($_POST['contactSubject']));
-   $contact_message = trim(stripslashes($_POST['contactMessage']));
-
-   // Check Name
-	if (strlen($name) < 2) {
-		$error['name'] = "Please enter your name.";
-	}
-	// Check Email
-	if (!preg_match('/^[a-z0-9&\'\.\-_\+]+@[a-z0-9\-]+\.([a-z0-9\-]+\.)*+[a-z]{2}/is', $email)) {
-		$error['email'] = "Please enter a valid email address.";
-	}
-	// Check Message
-	if (strlen($contact_message) < 15) {
-		$error['message'] = "Please enter your message. It should have at least 15 characters.";
-	}
-   // Subject
-	if ($subject == '') { $subject = "Contact Form Submission"; }
+/* SMTP class, needed if you want to use SMTP. */
+require 'PHPMailer-master/src/SMTP.php';
 
 
-   // Set Message
-   $message .= "Email from: " . $name . "<br />";
-	$message .= "Email address: " . $email . "<br />";
-   $message .= "Message: <br />";
-   $message .= $contact_message;
-   $message .= "<br /> ----- <br /> This email was sent from your site's contact form. <br />";
 
-   // Set From: header
-   $from =  $name . " <" . $email . ">";
+$emailTo = 'nobuhlemlahleki@gmail.com';
 
-   // Email Headers
-	$headers = "From: " . $from . "\r\n";
-	$headers .= "Reply-To: ". $email . "\r\n";
- 	$headers .= "MIME-Version: 1.0\r\n";
-	$headers .= "Content-Type: text/html; charset=ISO-8859-1\r\n";
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    $name = $_POST["contactName"];
+    $emailFrom = $_POST["contactEmail"];
+    $subject = $_POST["contactSubject"];
+    $message = $_POST["contactMessage"];
 
+    $mail = new PHPMailer(true);
 
-	if (!$error) {
-		$mail = new PHPMailer(true);
-		try {
-		   $mail->setFrom($email, $name);
-		   $mail->addAddress($siteOwnersEmail);
-		   $mail->Subject = $subject;
-		   $mail->isHTML(true);
-		   $mail->Body = $message;
-	 
-		   $mail->send();
-		   echo "OK";
-		} catch (Exception $e) {
-		   echo "Mailer Error: " . $mail->ErrorInfo;
-		}
-	 } else {
+    try {
+        $mail->isSMTP();
+        $mail->Host       = 'smtp.gmail.com';
+        $mail->SMTPAuth   = true;
+        $mail->Username   = 'nobuhlemlahleki@gmail.com';
+        $mail->Password   = 'jcob fytq hkhg xpac'; // Your Gmail password
+        $mail->SMTPSecure = 'tls'; // Encryption type
+        $mail->Port       = 587; // Port for TLS encryption
 
-   if (!$error) {
+        $mail->setFrom($emailFrom);
+        $mail->addAddress($emailTo);
 
-      ini_set("sendmail_from", $siteOwnersEmail); // for windows server
-      $mail = mail($siteOwnersEmail, $subject, $message, $headers);
+        $mail->isHTML(true);
+        $mail->Subject = $subject;
+        $mail->Body    = "Name: $name<br><br>" . $message;
 
-		if ($mail) { echo "OK"; }
-      else { echo "Something went wrong. Please try again."; }
-		
-	} # end if - no validation error
+        if ($mail->send()) {
+            $_SESSION['success'] = true;
+			error_log('Email sent successfully to ' . $emailTo);
+        } else {
+            $_SESSION['success'] = false;
+			error_log('Email sending failed: ' . $mail->ErrorInfo);
+            echo 'Mailer Error: ' . $mail->ErrorInfo;
+        }
+    } catch (Exception $e) {
+        $_SESSION['success'] = false;
+        echo 'Exception: ' . $e->getMessage();
+    }
 
-	else {
-
-		$response = (isset($error['name'])) ? $error['name'] . "<br /> \n" : null;
-		$response .= (isset($error['email'])) ? $error['email'] . "<br /> \n" : null;
-		$response .= (isset($error['message'])) ? $error['message'] . "<br />" : null;
-		
-		echo $response;
-
-	} # end if - there was a validation error
-
+    header('Location: index.html'); // Redirect back to the contact form page
+    exit(); // Terminate script execution after redirection
+} else {
+    header('Location: index.html'); // Redirect back to the contact form page if accessed directly
+    exit(); // Terminate script execution after redirection
 }
-}
-
 ?>
